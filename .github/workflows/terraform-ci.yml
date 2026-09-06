@@ -1,0 +1,35 @@
+name: terraform-ci
+
+on:
+  pull_request:
+    paths:
+      - "**.tf"
+      - "**.tfvars"
+  push:
+    branches: [main]
+    paths:
+      - "**.tf"
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    env:
+      ENV: dev
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.5"
+
+      - name: Terraform fmt check
+        run: terraform fmt -check -recursive
+
+      - name: Terraform init
+        run: terraform init -backend-config=environments/${{ env.ENV }}/backend.hcl
+
+      - name: Terraform validate
+        run: terraform validate
+
+      - name: Terraform plan
+        run: terraform plan -var-file=environments/${{ env.ENV }}/terraform.tfvars

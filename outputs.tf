@@ -1,0 +1,5 @@
+# Example:
+# output "example_id" {
+#   description = "ID of the example resource"
+#   value       = module.example.id
+# }
